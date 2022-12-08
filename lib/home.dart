@@ -4,9 +4,8 @@ import 'dart:convert';
 
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({ Key? key, required this.title}) : super(key: key);
+  MyHomePage({ Key? key }) : super(key: key);
 
-  final String title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -24,19 +23,11 @@ class _MyHomePageState extends State<MyHomePage> {
     headers: {"Accept": "application/json"} ///XXX
     );  ///XXX
     var jsonData = json.decode(data.body);
-
-    ///
-    //  this.setState(() {
-    //   datas = Map<String,dynamic>.from( json.decode(data.body)) as List?;
-    // });
-
-    // return "Success!";
-
+    
      @override
   void initState() {
     this._getCharacters();
   }
-    
     ///
 
     List<Character> characters = [];
@@ -46,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
           c['name'], c['status'], c['species'], c['gender'], c['image']);
       characters.add(character);
     }
-
     return characters;
   }
 
@@ -55,7 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        centerTitle: true,
+        title: Text("Rick y Morty Api"),
       ),
       body: Container(
         child: FutureBuilder(
@@ -63,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data == null) {
               return Container(
-                child: Center(
+                child: const Center(
                   child: Text("Loading..."),
                 ),
               );
@@ -73,28 +64,49 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
                     leading: CircleAvatar(
+                      
                       backgroundImage:
                           NetworkImage(snapshot.data[index].imageUrl),
                     ),
-                    title: Text(snapshot.data[index].name),
-                    subtitle: Text(snapshot.data[index].status),
+                    title: Text(snapshot.data[index].name ,  style: TextStyle(fontSize: 20),),
+                    subtitle: Text(snapshot.data[index].status ,  style: TextStyle(fontSize: 15),),
                   );
-                });
+                }
+              );
             }
           },
         ),
       ),
+      floatingActionButton: Container(   
+        child: Row( 
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+             FloatingActionButton(onPressed: (){
+               setState(() {
+                  page--;
+                  _getCharacters();
+                });
+            },
+              tooltip: 'Decrementar',
+              child: Icon(Icons.arrow_back_ios_new,color: Colors.red,),
+            ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            page++;
-            _getCharacters();
-          });
-        },
-        tooltip: 'Incrementar',
-        child: Icon(Icons.add),
-      )
+            SizedBox(width: 10, height: 10,),
+
+            FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  page++;
+                  _getCharacters();
+                });
+              },
+              tooltip: 'Incrementar',
+              child: Icon(Icons.arrow_forward_ios , color: Colors.blue,),
+            ),
+          ],
+        ),
+      ),   
     );
   }
 }
